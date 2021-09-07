@@ -21,6 +21,7 @@ namespace Vehicles.API.Data
         public async Task SeedAsync()
         {
             await _context.Database.EnsureCreatedAsync();
+            //await CheckVehiclesTypeAsync();
             await CheckBrandsAsync();
             await CheckDocumentTypesAsync();
             await CheckProceduresAsync();
@@ -52,6 +53,8 @@ namespace Vehicles.API.Data
                 await _userHelper.AddUserAsync(user, "123456");
                 await _userHelper.AddUserToRoleAsync(user, userType.ToString());
 
+                string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
             }
         }
 
@@ -130,6 +133,16 @@ namespace Vehicles.API.Data
                 await _context.SaveChangesAsync();
             }
         }
+
+        //private async Task CheckVehiclesTypeAsync()
+        //{
+        //    if (!_context.VehicleTypes.Any())
+        //    {
+        //        _context.VehicleTypes.Add(new VehicleType { Description = "Carro" });
+        //        _context.VehicleTypes.Add(new VehicleType { Description = "Moto" });
+        //        await _context.SaveChangesAsync();
+        //    }
+        //}
 
     }
 }

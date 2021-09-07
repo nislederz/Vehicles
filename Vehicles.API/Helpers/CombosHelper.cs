@@ -72,7 +72,7 @@ namespace Vehicles.API.Helpers
 
         public IEnumerable<SelectListItem> GetComboVehicleTypes()
         {
-            List<SelectListItem> list = _context.VehiclesType.Select(x => new SelectListItem
+            List<SelectListItem> list = _context.VehicleTypes.Select(x => new SelectListItem
             {
                 Text = x.Description,
                 Value = x.Id.ToString()

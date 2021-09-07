@@ -20,7 +20,7 @@ namespace Vehicles.API.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.VehiclesType.ToListAsync());
+            return View(await _context.VehicleTypes.ToListAsync());
         }
 
         public IActionResult Create()
@@ -66,7 +66,7 @@ namespace Vehicles.API.Controllers
                 return NotFound();
             }
 
-            VehicleType vehicleType = await _context.VehiclesType.FindAsync(id);
+            VehicleType vehicleType = await _context.VehicleTypes.FindAsync(id);
             if (vehicleType == null)
             {
                 return NotFound();
@@ -117,14 +117,14 @@ namespace Vehicles.API.Controllers
                 return NotFound();
             }
 
-            VehicleType vehicleType = await _context.VehiclesType
+            VehicleType vehicleType = await _context.VehicleTypes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (vehicleType == null)
             {
                 return NotFound();
             }
 
-            _context.VehiclesType.Remove(vehicleType);
+            _context.VehicleTypes.Remove(vehicleType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

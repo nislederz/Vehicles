@@ -6,7 +6,7 @@ namespace Vehicles.API.Data
 {
     public class DataContext : IdentityDbContext<User>
     {
-        public DataContext(DbContextOptions<DataContext> option) : base(option)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
 
@@ -24,16 +24,16 @@ namespace Vehicles.API.Data
 
         public DbSet<VehiclePhoto> VehiclePhotos { get; set; }
 
-        public DbSet<VehicleType> VehiclesType { get; set; }
+        public DbSet<VehicleType> VehicleTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Procedure>().HasIndex(x => x.Description).IsUnique();
-            modelBuilder.Entity<VehicleType>().HasIndex(x => x.Description).IsUnique();
             modelBuilder.Entity<Brand>().HasIndex(x => x.Description).IsUnique();
-            modelBuilder.Entity<Vehicle>().HasIndex(x => x.Plaque).IsUnique();
             modelBuilder.Entity<DocumentType>().HasIndex(x => x.Description).IsUnique();
+            modelBuilder.Entity<Procedure>().HasIndex(x => x.Description).IsUnique();
+            modelBuilder.Entity<Vehicle>().HasIndex(x => x.Plaque).IsUnique();
+            modelBuilder.Entity<VehicleType>().HasIndex(x => x.Description).IsUnique();
         }
     }
 }
