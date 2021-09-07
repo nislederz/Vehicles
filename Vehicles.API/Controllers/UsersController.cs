@@ -464,7 +464,7 @@ namespace Vehicles.API.Controllers
 
             try
             {
-                await _blobHelper.DeleteBlobAsync(vehiclePhoto.ImageId, "vehiclephotos");
+                await _blobHelper.DeleteBlobAsync(vehiclePhoto.ImageId, "vehicles");
             }
             catch { }
 
