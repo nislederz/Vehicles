@@ -23,7 +23,7 @@ namespace Vehicles.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddIdentity<User, IdentityRole>(x => 
+            services.AddIdentity<User, IdentityRole>(x =>
             {
                 x.User.RequireUniqueEmail = true;
                 x.Password.RequireDigit = false;
@@ -40,6 +40,7 @@ namespace Vehicles.API
 
             services.AddTransient<SeedDb>();
             services.AddScoped<IUserHelper, UserHelper>();
+            services.AddScoped<ICombosHelper, CombosHelper>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
