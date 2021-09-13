@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Vehicles.API.Data;
 using Vehicles.API.Data.Entities;
 using Vehicles.API.Helpers;
@@ -23,6 +25,7 @@ namespace Vehicles.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
             services.AddIdentity<User, IdentityRole>(x =>
             {
                 x.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
@@ -36,6 +39,18 @@ namespace Vehicles.API
             })
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<DataContext>();
+
+            services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = Configuration["Tokens:Issuer"],
+                        ValidAudience = Configuration["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                    };
+                });
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -51,9 +66,14 @@ namespace Vehicles.API
             services.AddTransient<SeedDb>();
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<ICombosHelper, CombosHelper>();
-            services.AddScoped<IBlobHelper, BlopHelper>();
+            //services.AddScoped<IBlobHelper, BlobHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
+            //services.AddAzureClients(builder =>
+            //{
+            //    builder.AddBlobServiceClient(Configuration["Blob:ConnectionString:blob"], preferMsi: true);
+            //    builder.AddQueueServiceClient(Configuration["Blob:ConnectionString:queue"], preferMsi: true);
+            //});
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
