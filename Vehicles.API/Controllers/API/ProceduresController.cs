@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace Vehicles.API.Controllers.API
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Procedure>>> GetProcedures()
         {
-            return await _context.Procedures.ToListAsync();
+            return await _context.Procedures.OrderBy(x => x.Description).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -54,29 +55,51 @@ namespace Vehicles.API.Controllers.API
             try
             {
                 await _context.SaveChangesAsync();
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateException DbUpdateException)
             {
-                if (!ProcedureExists(id))
+                if (DbUpdateException.InnerException.Message.Contains("duplicate"))
                 {
-                    return NotFound();
+                    return BadRequest("Ya existe este procedimiento.");
                 }
                 else
                 {
-                    throw;
+                    return BadRequest(DbUpdateException.InnerException.Message);
                 }
             }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
 
-            return NoContent();
         }
 
         [HttpPost]
         public async Task<ActionResult<Procedure>> PostProcedure(Procedure procedure)
         {
             _context.Procedures.Add(procedure);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProcedure", new { id = procedure.Id }, procedure);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetProcedure", new { id = procedure.Id }, procedure);
+            }
+            catch (DbUpdateException DbUpdateException)
+            {
+                if (DbUpdateException.InnerException.Message.Contains("duplicate"))
+                {
+                    return BadRequest("Ya existe este procedimiento.");
+                }
+                else
+                {
+                    return BadRequest(DbUpdateException.InnerException.Message);
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpDelete("{id}")]
